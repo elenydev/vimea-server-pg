@@ -91,6 +91,6 @@ export const login: RequestHandler<{}, {}, UserCredentials> = async (req, res, n
       errorResponse(res, 404, "User doesn't exist");
     }
   } catch (err) {
-    errorResponse(res, 500, "Authorization failed, please try again");
+    errorResponse(res, 500, "Server error, please try again");  
   }
 };
