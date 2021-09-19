@@ -15,6 +15,7 @@ model User {
   passwordHash String
   avatarUrl String
   policy Boolean
+  version Int @default(1) 
   favouriteMovies Movie[]
 }
 
