@@ -1,0 +1,29 @@
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id String  @default(uuid()) @id
+  firstName String @db.VarChar(60)
+  lastName String @db.VarChar(90)
+  email String
+  passwordHash String
+  avatarUrl String
+  policy Boolean
+  favouriteMovies Movie[]
+}
+
+model Movie {
+  id String @default(uuid()) @id
+  title String
+  backdropPathUrl String
+  overview String
+  averageVote Float
+  users User[]
+}
+
