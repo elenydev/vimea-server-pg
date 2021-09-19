@@ -8,3 +8,8 @@ export const getUserPostValidator = () => (
   body("lastName").exists(),
   check("avatar").exists()
 );
+
+export const getUserLoginValidator = () => (
+  body("email").isEmail(),
+  body("password").exists().isLength({ min: 8})
+);
