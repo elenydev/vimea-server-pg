@@ -4,7 +4,7 @@ import prisma from "../../prisma";
 import { errorResponse } from "../../utils/errorResponse";
 import { validationErrorResponse } from "../../utils/validationErrorResponse";
 
-export const logOut: RequestHandler<{}, {}, { id: string }> = async (req,res,next) => {
+export const logOut: RequestHandler<{}, {}, { id: string }> = async (req,res) => {
   const { id } = req.body;
 
   const validationStatus = validationResult(req);
@@ -21,6 +21,5 @@ export const logOut: RequestHandler<{}, {}, { id: string }> = async (req,res,nex
     }
   } catch (err) {
     errorResponse(res, 500, "Server error, please try again");
-    next(err);
   }
 };

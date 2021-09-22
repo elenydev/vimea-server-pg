@@ -9,7 +9,7 @@ import { validationErrorResponse } from "../../utils/validationErrorResponse";
 import { uploadFile } from "../../config/s3-bucket";
 import jwt from 'jsonwebtoken';
 
-export const create: RequestHandler<{}, {}, UserCreateParams> = async (req, res, next) => {
+export const create: RequestHandler<{}, {}, UserCreateParams> = async (req, res) => {
   const { firstName, lastName, email, password, policy } = req.body;
   const avatar = req.file;
 
@@ -47,7 +47,7 @@ export const create: RequestHandler<{}, {}, UserCreateParams> = async (req, res,
 };
 
 
-export const login: RequestHandler<{}, {}, UserCredentials> = async (req, res, next) => {
+export const login: RequestHandler<{}, {}, UserCredentials> = async (req, res) => {
   const { email, password } = req.body;
 
   const validationStatus = validationResult(req);

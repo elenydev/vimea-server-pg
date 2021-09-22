@@ -3,8 +3,13 @@ import { validationResult } from "express-validator";
 import prisma from "../../prisma";
 import { errorResponse } from "../../utils/errorResponse";
 import { validationErrorResponse } from "../../utils/validationErrorResponse";
+import bcrypt from "bcryptjs";
+import { sendEmailAfterChangePassword } from "../mailers";
 
-export const avatar: RequestHandler<{ userId: string }, {}, {}> = async (req, res, next) => {
+export const avatar: RequestHandler<{ userId: string }, {}, {}> = async (
+  req,
+  res
+) => {
   const { userId } = req.params;
   const avatar = req.file;
 
@@ -19,12 +24,12 @@ export const avatar: RequestHandler<{ userId: string }, {}, {}> = async (req, re
   if (specificUser) {
     try {
       await prisma.user.update({
-          where: {
-              id: userId
-          },
-          data: {
-              avatarUrl: imageUrl
-          }
+        where: {
+          id: userId,
+        },
+        data: {
+          avatarUrl: imageUrl,
+        },
       });
       res.status(201).send({
         result: specificUser,
@@ -36,6 +41,68 @@ export const avatar: RequestHandler<{ userId: string }, {}, {}> = async (req, re
     }
   } else {
     errorResponse(res, 500, "Server error, please try again");
-    next();
+  }
+};
+
+export const password: RequestHandler<
+  {},
+  {},
+  { email: string; password: string; newPassword: string }
+> = async (req, res) => {
+  const { email, password, newPassword } = req.body;
+
+  const validationStatus = validationResult(req);
+  if (!validationStatus.isEmpty()) {
+    validationErrorResponse(res, validationStatus);
+  }
+
+  if (password === newPassword) {
+    return res.status(403).send({ message: "You provided the same password " });
+  }
+
+  if (email === "admin@admin.com") {
+    return res
+      .status(403)
+      .send({ message: "You can't change password for admin account " });
+  }
+
+  try {
+    const user = await prisma.user.findFirst({
+      where: {
+        email: email,
+      },
+    });
+
+    if (user !== null) {
+      await bcrypt
+        .compare(password, user.passwordHash)
+        .then(async (match) => {
+          if (match === true) {
+            const hashedPw = await bcrypt.hash(newPassword, 12);
+            const updatedUser = await prisma.user.update({
+              where: {
+                id: user.id,
+              },
+              data: {
+                passwordHash: hashedPw,
+              },
+            });
+            sendEmailAfterChangePassword(email);
+            return res.status(201).send({
+              result: updatedUser,
+              message: "Password successfully changed",
+            });
+          } else {
+            res
+              .status(422)
+              .send({ message: "Wrong password provided, try again" });
+          }
+        })
+        .catch((err) =>
+          errorResponse(res, 403, "Error with authentication occured")
+        );
+    }
+  } catch (err) {
+    errorResponse(res, 500, "Server error, please try again");
   }
 };
