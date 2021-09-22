@@ -9,3 +9,7 @@ export const getPutUserChangePasswordValidator = () => (
   param('password').exists().isLength({ min: 8}),
   param('newPassword').exists().isLength({ min: 8})
 );
+
+export const getPutUserRemindPassword = () => (
+  param('email').exists().isEmail()
+)

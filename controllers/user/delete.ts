@@ -20,6 +20,6 @@ export const logOut: RequestHandler<{}, {}, { id: string }> = async (req,res) =>
       errorResponse(res, 401, "We can't delete session for this user, as he's doesn't exist");
     }
   } catch (err) {
-    errorResponse(res, 500, "Server error, please try again");
+    errorResponse(res, 500);
   }
 };

@@ -42,7 +42,7 @@ export const create: RequestHandler<{}, {}, UserCreateParams> = async (req, res)
       errorResponse(res, 422, "User already exist");
     }
   } catch (err) {
-    errorResponse(res, 500, "Creating account failed, please try again");
+    errorResponse(res, 500);
   }
 };
 
@@ -91,6 +91,6 @@ export const login: RequestHandler<{}, {}, UserCredentials> = async (req, res) =
       errorResponse(res, 404, "User doesn't exist");
     }
   } catch (err) {
-    errorResponse(res, 500, "Server error, please try again");  
+    errorResponse(res, 500);  
   }
 };

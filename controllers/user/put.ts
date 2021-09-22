@@ -4,7 +4,8 @@ import prisma from "../../prisma";
 import { errorResponse } from "../../utils/errorResponse";
 import { validationErrorResponse } from "../../utils/validationErrorResponse";
 import bcrypt from "bcryptjs";
-import { sendEmailAfterChangePassword } from "../mailers";
+import { sendEmailAfterChangePassword, sendEmailAfterRemindPassword } from "../mailers";
+import { generateRandomPassword } from "../../utils/randomPassword";
 
 export const avatar: RequestHandler<{ userId: string }, {}, {}> = async (
   req,
@@ -32,7 +33,6 @@ export const avatar: RequestHandler<{ userId: string }, {}, {}> = async (
         },
       });
       res.status(201).send({
-        result: specificUser,
         message: "Avatar succesfully changed",
       });
       return;
@@ -40,7 +40,7 @@ export const avatar: RequestHandler<{ userId: string }, {}, {}> = async (
       errorResponse(res, 422, "Updating user avatar failed, please try again");
     }
   } else {
-    errorResponse(res, 500, "Server error, please try again");
+    errorResponse(res, 500);
   }
 };
 
@@ -79,7 +79,7 @@ export const password: RequestHandler<
         .then(async (match) => {
           if (match === true) {
             const hashedPw = await bcrypt.hash(newPassword, 12);
-            const updatedUser = await prisma.user.update({
+            await prisma.user.update({
               where: {
                 id: user.id,
               },
@@ -89,7 +89,6 @@ export const password: RequestHandler<
             });
             sendEmailAfterChangePassword(email);
             return res.status(201).send({
-              result: updatedUser,
               message: "Password successfully changed",
             });
           } else {
@@ -103,6 +102,42 @@ export const password: RequestHandler<
         );
     }
   } catch (err) {
-    errorResponse(res, 500, "Server error, please try again");
+    errorResponse(res, 500);
+  }
+};
+
+export const remindPassword: RequestHandler<{ email: string }> = async (
+  req,
+  res,
+) => {
+  const { email }: { email: string } = req.body;
+
+  const validationStatus = validationResult(req);
+  if (!validationStatus.isEmpty()) {
+    validationErrorResponse(res, validationStatus);
+  }
+
+  try {
+    const user = await prisma.user.findFirst({ where: { email: email }});
+    if (user) {
+      const generatedRandomPassword = generateRandomPassword();
+      const hashedPw = await bcrypt.hash(generatedRandomPassword, 12);
+      await prisma.user.update({
+        where: {
+          id: user.id
+        },
+        data: {
+          passwordHash: hashedPw
+        }
+      })
+      sendEmailAfterRemindPassword(email, generatedRandomPassword);
+      res.status(201).send({
+        message: "Check your email account for new password",
+      });
+    } else {
+      res.status(404).send({ message: "We don't have user with this email" });
+    }
+  } catch (err) {
+    errorResponse(res, 500);
   }
 };
