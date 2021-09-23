@@ -1,15 +1,14 @@
-import { check, param } from "express-validator";
+import { body, check } from "express-validator";
 
 export const getPutUserAvatarValidator = () => (
-  param("id").exists(), check("avatar").exists()
+  body("id").exists(), check("avatar").exists()
 );
 
 export const getPutUserChangePasswordValidator = () => (
-  param('email').exists().isEmail(),
-  param('password').exists().isLength({ min: 8}),
-  param('newPassword').exists().isLength({ min: 8})
+  body("email").exists().isEmail(),
+  body("password").exists().isLength({ min: 8 }),
+  body("newPassword").exists().isLength({ min: 8 })
 );
 
-export const getPutUserRemindPassword = () => (
-  param('email').exists().isEmail()
-)
+export const getPutUserRemindPasswordValidator = () =>
+  body("email").exists().isEmail();

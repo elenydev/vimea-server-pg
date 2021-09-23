@@ -7,7 +7,7 @@ import bcrypt from "bcryptjs";
 import { sendEmailAfterChangePassword, sendEmailAfterRemindPassword } from "../mailers";
 import { generateRandomPassword } from "../../utils/randomPassword";
 
-export const avatar: RequestHandler<{ userId: string }, {}, {}> = async (
+export const avatar: RequestHandler<{ userId: string }> = async (
   req,
   res
 ) => {
