@@ -1,4 +1,5 @@
 import * as core from 'express-serve-static-core'
+import { Movie } from './Movie';
 
 export interface UserCreateParams {
   firstName: string;
@@ -22,4 +23,12 @@ export interface GetUserFavouritesQueryParams extends core.ParamsDictionary {
 
 export interface GetCurrentUserQueryParams extends core.ParamsDictionary { 
   email: string;
+}
+
+export interface PostUserFavouriteMovieBody {
+  movie: Movie
+}
+
+export interface PostUserfavouriteMovieParams extends core.ParamsDictionary {
+  userId: string;
 }

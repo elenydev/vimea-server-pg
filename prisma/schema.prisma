@@ -21,6 +21,7 @@ model User {
 
 model Movie {
   id String @default(uuid()) @id
+  externalApiId String
   title String
   backdropPathUrl String
   overview String

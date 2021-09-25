@@ -1,4 +1,4 @@
-import { body, check } from "express-validator";
+import { body, check, param } from "express-validator";
 
 export const getUserPostValidator = () => (
   body("email").isEmail(),
@@ -13,3 +13,9 @@ export const getUserLoginValidator = () => (
   body("email").isEmail(),
   body("password").exists().isLength({ min: 8})
 );
+
+export const getUserPostFavouriteMovieValidator = () => (
+  param("userId").exists(),
+  check("movie").exists()
+);
+
