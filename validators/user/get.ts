@@ -5,3 +5,7 @@ export const getUserFavouriteMoviesValidator = () => (
     param('pageNumber').exists(),
     param('pageSize').exists()
 );
+
+export const getCurrentUserValidator = () => (
+    param('email').exists().isEmail()
+);

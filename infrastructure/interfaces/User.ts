@@ -14,9 +14,12 @@ export interface UserCredentials {
   password: string;
 }
 
-
 export interface GetUserFavouritesQueryParams extends core.ParamsDictionary {
   userId: string;
   pageNumber: string;
   pageSize: string;
+}
+
+export interface GetCurrentUserQueryParams extends core.ParamsDictionary { 
+  email: string;
 }
