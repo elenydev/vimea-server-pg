@@ -29,13 +29,21 @@ export const favouriteMovies: RequestHandler<GetUserFavouritesQueryParams> =
             skip: Number(pageNumber) * Number(pageSize),
             take: Number(pageSize),
           },
+          _count: {
+            select: {
+              favouriteMovies: true
+            }
+          }
         },
       });
 
       if (user) {
-        const { favouriteMovies } = user;
+        const { favouriteMovies, _count } = user;
         res.status(200).send({
           results: favouriteMovies,
+          pageNumber: pageNumber,
+          pageSize: pageSize,
+          totalCount: _count
         });
       } else {
         errorResponse(res, 404, "User not found");
