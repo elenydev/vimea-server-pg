@@ -29,6 +29,11 @@ export interface PostUserFavouriteMovieBody {
   movie: Movie
 }
 
-export interface PostUserfavouriteMovieParams extends core.ParamsDictionary {
+export interface PostUserFavouriteMovieParams extends core.ParamsDictionary {
   userId: string;
+}
+
+export interface DeleteUserFavouriteMovieParams extends core.ParamsDictionary {
+  userId: string;
+  movieId: string;
 }

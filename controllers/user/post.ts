@@ -6,7 +6,7 @@ import Prisma from "../../prisma";
 import { sendEmailAfterUserRegister } from "../mailers/index";
 import {
   PostUserFavouriteMovieBody,
-  PostUserfavouriteMovieParams,
+  PostUserFavouriteMovieParams,
   UserCreateParams,
   UserCredentials,
 } from "../../infrastructure/interfaces/User";
@@ -122,7 +122,7 @@ export const login: RequestHandler<{}, {}, UserCredentials> = async (
 };
 
 export const favouriteMovie: RequestHandler<
-  PostUserfavouriteMovieParams,
+  PostUserFavouriteMovieParams,
   {},
   PostUserFavouriteMovieBody
 > = async (req, res) => {
