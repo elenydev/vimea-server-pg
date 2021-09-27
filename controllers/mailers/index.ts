@@ -33,7 +33,7 @@ export const sendEmailAfterUserRegister = (
     <small>Have a nice day! Vimea team. You can reply direct to this email or catch us on: vimeasite@gmail.com</small></p>
     </div>`,
   };
-  transporter.sendMail(mailOptions, function (err, data) {
+  transporter.sendMail(mailOptions, function (err) {
     if (err) {
       console.log(err);
     }
@@ -58,7 +58,7 @@ export const sendEmailAfterRemindPassword = (
     <small>Have a nice day! Vimea team. You can reply direct to this email or catch us on: vimeasite@gmail.com</small></p>
     </div>`,
   };
-  transporter.sendMail(mailOptions, function (err, data) {
+  transporter.sendMail(mailOptions, function (err) {
     if (err) {
       console.log(err);
     }
