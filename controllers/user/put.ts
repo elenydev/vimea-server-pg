@@ -6,6 +6,7 @@ import { validationErrorResponse } from "../../utils/validationErrorResponse";
 import bcrypt from "bcryptjs";
 import { sendEmailAfterChangePassword, sendEmailAfterRemindPassword } from "../mailers";
 import { generateRandomPassword } from "../../utils/randomPassword";
+import { EmptyInterface } from "../../infrastructure/interfaces/shared";
 
 export const avatar: RequestHandler<{ userId: string }> = async (
   req,
@@ -45,8 +46,8 @@ export const avatar: RequestHandler<{ userId: string }> = async (
 };
 
 export const password: RequestHandler<
-  {},
-  {},
+  EmptyInterface,
+  EmptyInterface,
   { email: string; password: string; newPassword: string }
 > = async (req, res) => {
   const { email, password, newPassword } = req.body;

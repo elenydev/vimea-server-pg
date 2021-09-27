@@ -15,8 +15,7 @@ export interface UserCredentials {
   password: string;
 }
 
-export interface GetUserFavouritesQueryParams extends core.ParamsDictionary {
-  userId: string;
+export interface GetUserFavouritesQueryParams extends core.ParamsDictionary, UserIdQueryParam {
   pageNumber: string;
   pageSize: string;
 }
@@ -28,12 +27,10 @@ export interface GetCurrentUserQueryParams extends core.ParamsDictionary {
 export interface PostUserFavouriteMovieBody {
   movie: Movie
 }
-
-export interface PostUserFavouriteMovieParams extends core.ParamsDictionary {
-  userId: string;
+export interface DeleteUserFavouriteMovieParams extends core.ParamsDictionary, UserIdQueryParam {
+  movieId: string;
 }
 
-export interface DeleteUserFavouriteMovieParams extends core.ParamsDictionary {
+export interface UserIdQueryParam extends core.ParamsDictionary {
   userId: string;
-  movieId: string;
 }

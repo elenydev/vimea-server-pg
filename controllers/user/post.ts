@@ -6,15 +6,16 @@ import Prisma from "../../prisma";
 import { sendEmailAfterUserRegister } from "../mailers/index";
 import {
   PostUserFavouriteMovieBody,
-  PostUserFavouriteMovieParams,
   UserCreateParams,
   UserCredentials,
+  UserIdQueryParam,
 } from "../../infrastructure/interfaces/User";
 import { validationErrorResponse } from "../../utils/validationErrorResponse";
 import { uploadFile } from "../../config/s3-bucket";
 import jwt from "jsonwebtoken";
+import { EmptyInterface } from "../../infrastructure/interfaces/shared";
 
-export const create: RequestHandler<{}, {}, UserCreateParams> = async (
+export const create: RequestHandler<EmptyInterface, EmptyInterface, UserCreateParams> = async (
   req,
   res
 ) => {
@@ -56,7 +57,7 @@ export const create: RequestHandler<{}, {}, UserCreateParams> = async (
   }
 };
 
-export const login: RequestHandler<{}, {}, UserCredentials> = async (
+export const login: RequestHandler<EmptyInterface, EmptyInterface, UserCredentials> = async (
   req,
   res
 ) => {
@@ -122,8 +123,8 @@ export const login: RequestHandler<{}, {}, UserCredentials> = async (
 };
 
 export const favouriteMovie: RequestHandler<
-  PostUserFavouriteMovieParams,
-  {},
+  UserIdQueryParam,
+  EmptyInterface,
   PostUserFavouriteMovieBody
 > = async (req, res) => {
   const { movie } = req.body;

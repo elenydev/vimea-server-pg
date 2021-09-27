@@ -1,15 +1,16 @@
 import { RequestHandler } from "express";
 import { validationResult } from "express-validator";
-import { DeleteUserFavouriteMovieParams } from "../../infrastructure/interfaces/User";
+import { EmptyInterface } from "../../infrastructure/interfaces/shared";
+import { DeleteUserFavouriteMovieParams, UserIdQueryParam } from "../../infrastructure/interfaces/User";
 import prisma from "../../prisma";
 import { errorResponse } from "../../utils/errorResponse";
 import { validationErrorResponse } from "../../utils/validationErrorResponse";
 
-export const logOut: RequestHandler<{}, {}, { id: string }> = async (
+export const logOut: RequestHandler<EmptyInterface, EmptyInterface, UserIdQueryParam> = async (
   req,
   res
 ) => {
-  const { id } = req.body;
+  const { userId } = req.body;
 
   const validationStatus = validationResult(req);
   if (!validationStatus.isEmpty()) {
@@ -17,7 +18,7 @@ export const logOut: RequestHandler<{}, {}, { id: string }> = async (
   }
 
   try {
-    const user = await prisma.user.findFirst({ where: { id: id } });
+    const user = await prisma.user.findFirst({ where: { id: userId } });
     if (user) {
       res.status(200).send({ message: "Logged out", token: "" });
     } else {
