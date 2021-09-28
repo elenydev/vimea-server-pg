@@ -2,6 +2,7 @@ import express from "express";
 import methodOverride from "method-override";
 import cors from "cors";
 import userRoutes from "./routes/user/";
+import path from "path"
 
 const app = express();
 const port = 8080;
@@ -24,6 +25,10 @@ app.use((req, res, next) => {
   }
   next();
 });
+
+router.get("/", (req, res, next) => {
+  res.sendFile(path.join(__dirname + "/index.html"))
+})
 
 router.use(userRoutes);
 
