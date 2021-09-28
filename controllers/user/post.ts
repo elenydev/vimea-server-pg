@@ -27,7 +27,7 @@ export const create: RequestHandler<
     errorResponse(res, 400, "Avatar is required");
   }
 
-  const validationStatus = validationResult(req);
+  const validationStatus = validationResult(req.body);
   if (!validationStatus.isEmpty()) {
     return validationErrorResponse(res, validationStatus);
   }
@@ -48,7 +48,7 @@ export const create: RequestHandler<
           email,
           passwordHash: hashedPw,
           avatarUrl: imageUrl,
-          policy,
+          policy: true,
         },
       });
 
