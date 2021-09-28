@@ -16,7 +16,7 @@ export const favouriteMovies: RequestHandler<GetUserFavouritesQueryParams> =
 
     const validationStatus = validationResult(req);
     if (!validationStatus.isEmpty()) {
-      validationErrorResponse(res, validationStatus);
+      return validationErrorResponse(res, validationStatus);
     }
 
     try {
@@ -61,7 +61,7 @@ export const currentUser: RequestHandler<GetCurrentUserQueryParams> = async (
 
   const validationStatus = validationResult(req);
   if (!validationStatus.isEmpty()) {
-    validationErrorResponse(res, validationStatus);
+    return validationErrorResponse(res, validationStatus);
   }
 
   try {

@@ -17,7 +17,7 @@ export const avatar: RequestHandler<{ userId: string }> = async (
 
   const validationStatus = validationResult(req);
   if (!validationStatus.isEmpty()) {
-    validationErrorResponse(res, validationStatus);
+    return validationErrorResponse(res, validationStatus);
   }
 
   const imageUrl = avatar!.filename;
@@ -54,7 +54,7 @@ export const password: RequestHandler<
 
   const validationStatus = validationResult(req);
   if (!validationStatus.isEmpty()) {
-    validationErrorResponse(res, validationStatus);
+    return validationErrorResponse(res, validationStatus);
   }
 
   if (password === newPassword) {
@@ -115,7 +115,7 @@ export const remindPassword: RequestHandler<{ email: string }> = async (
 
   const validationStatus = validationResult(req);
   if (!validationStatus.isEmpty()) {
-    validationErrorResponse(res, validationStatus);
+    return validationErrorResponse(res, validationStatus);
   }
 
   try {

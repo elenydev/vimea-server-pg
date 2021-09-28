@@ -14,7 +14,7 @@ export const logOut: RequestHandler<EmptyInterface, EmptyInterface, UserIdQueryP
 
   const validationStatus = validationResult(req);
   if (!validationStatus.isEmpty()) {
-    validationErrorResponse(res, validationStatus);
+    return validationErrorResponse(res, validationStatus);
   }
 
   try {
@@ -39,7 +39,7 @@ export const favouriteMovie: RequestHandler<DeleteUserFavouriteMovieParams> =
 
     const validationStatus = validationResult(req);
     if (!validationStatus.isEmpty()) {
-      validationErrorResponse(res, validationStatus);
+      return validationErrorResponse(res, validationStatus);
     }
 
     try {

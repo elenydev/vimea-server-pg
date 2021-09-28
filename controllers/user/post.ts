@@ -15,16 +15,21 @@ import { uploadFile } from "../../config/s3-bucket";
 import jwt from "jsonwebtoken";
 import { EmptyInterface } from "../../infrastructure/interfaces/shared";
 
-export const create: RequestHandler<EmptyInterface, EmptyInterface, UserCreateParams> = async (
-  req,
-  res
-) => {
+export const create: RequestHandler<
+  EmptyInterface,
+  EmptyInterface,
+  UserCreateParams
+> = async (req, res) => {
   const { firstName, lastName, email, password, policy } = req.body;
   const avatar = req.file;
 
+  if (!avatar) {
+    errorResponse(res, 400, "Avatar is required");
+  }
+
   const validationStatus = validationResult(req);
   if (!validationStatus.isEmpty()) {
-    validationErrorResponse(res, validationStatus);
+    return validationErrorResponse(res, validationStatus);
   }
 
   try {
@@ -57,15 +62,16 @@ export const create: RequestHandler<EmptyInterface, EmptyInterface, UserCreatePa
   }
 };
 
-export const login: RequestHandler<EmptyInterface, EmptyInterface, UserCredentials> = async (
-  req,
-  res
-) => {
+export const login: RequestHandler<
+  EmptyInterface,
+  EmptyInterface,
+  UserCredentials
+> = async (req, res) => {
   const { email, password } = req.body;
 
   const validationStatus = validationResult(req);
   if (!validationStatus.isEmpty()) {
-    validationErrorResponse(res, validationStatus);
+    return validationErrorResponse(res, validationStatus);
   }
 
   try {
@@ -144,7 +150,7 @@ export const favouriteMovie: RequestHandler<
       const isAlreadyAdded = user.favouriteMovies.find(
         ({ externalApiId }) => externalApiId === movie.id
       );
- 
+
       if (!isAlreadyAdded) {
         const movieInstance = await Prisma.movie.findFirst({
           where: { externalApiId: movie.id },
@@ -155,7 +161,7 @@ export const favouriteMovie: RequestHandler<
             id: userId,
           },
           data: {
-            favouriteMovies: { 
+            favouriteMovies: {
               connectOrCreate: {
                 where: {
                   id: movieInstance?.id,
