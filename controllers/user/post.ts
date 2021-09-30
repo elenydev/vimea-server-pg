@@ -20,7 +20,7 @@ export const create: RequestHandler<
   EmptyInterface,
   UserCreateParams
 > = async (req, res) => {
-  const { firstName, lastName, email, password, policy } = req.body;
+  const { firstName, lastName, email, password } = req.body;
   const avatar = req.file;
 
   if (!avatar) {
