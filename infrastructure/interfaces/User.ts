@@ -21,7 +21,7 @@ export interface GetUserFavouritesQueryParams extends core.ParamsDictionary, Use
 }
 
 export interface GetCurrentUserQueryParams extends core.ParamsDictionary { 
-  email: string;
+  userId: string;
 }
 
 export interface PostUserFavouriteMovieBody {

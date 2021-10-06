@@ -31,9 +31,9 @@ export const favouriteMovies: RequestHandler<GetUserFavouritesQueryParams> =
           },
           _count: {
             select: {
-              favouriteMovies: true
-            }
-          }
+              favouriteMovies: true,
+            },
+          },
         },
       });
 
@@ -43,7 +43,7 @@ export const favouriteMovies: RequestHandler<GetUserFavouritesQueryParams> =
           results: favouriteMovies,
           pageNumber: pageNumber,
           pageSize: pageSize,
-          totalCount: _count
+          totalCount: _count,
         });
       } else {
         errorResponse(res, 404, "User not found");
@@ -57,9 +57,9 @@ export const currentUser: RequestHandler<GetCurrentUserQueryParams> = async (
   req,
   res
 ) => {
-  const { email } = req.params;
+  const { userId } = req.params;
 
-  const validationStatus = validationResult(req);
+  const validationStatus = validationResult(req.params);
   if (!validationStatus.isEmpty()) {
     return validationErrorResponse(res, validationStatus);
   }
@@ -67,7 +67,7 @@ export const currentUser: RequestHandler<GetCurrentUserQueryParams> = async (
   try {
     const user = await Prisma.user.findFirst({
       where: {
-        email: email,
+        id: userId,
       },
       include: {
         favouriteMovies: true,
@@ -75,7 +75,7 @@ export const currentUser: RequestHandler<GetCurrentUserQueryParams> = async (
     });
     if (user) {
       const token = jwt.sign(
-        { email: email, userId: user.id },
+        { email: user.email, userId: user.id },
         process.env.SECRET!,
         { expiresIn: "1h" }
       );
@@ -88,16 +88,17 @@ export const currentUser: RequestHandler<GetCurrentUserQueryParams> = async (
           path: "/",
         })
       );
-      const { firstName, lastName, avatarUrl } = user;
+      const { firstName, lastName, avatarUrl, email, favouriteMovies, id } =
+        user;
       res.status(200).send({
         result: {
           firstName,
           lastName,
           email,
           avatarUrl,
-          userId: user.id,
+          userId: id,
           accessToken: token,
-          favouriteMovies: user.favouriteMovies,
+          favouriteMovies: favouriteMovies,
         },
       });
     } else {
