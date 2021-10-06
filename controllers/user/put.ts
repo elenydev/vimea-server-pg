@@ -6,6 +6,7 @@ import { validationErrorResponse } from "../../utils/validationErrorResponse";
 import bcrypt from "bcryptjs";
 import { sendEmailAfterChangePassword, sendEmailAfterRemindPassword } from "../mailers";
 import { generateRandomPassword } from "../../utils/randomPassword";
+import { EmptyInterface } from "../../infrastructure/interfaces/shared";
 
 export const avatar: RequestHandler<{ userId: string }> = async (
   req,
@@ -16,7 +17,7 @@ export const avatar: RequestHandler<{ userId: string }> = async (
 
   const validationStatus = validationResult(req);
   if (!validationStatus.isEmpty()) {
-    validationErrorResponse(res, validationStatus);
+    return validationErrorResponse(res, validationStatus);
   }
 
   const imageUrl = avatar!.filename;
@@ -45,15 +46,15 @@ export const avatar: RequestHandler<{ userId: string }> = async (
 };
 
 export const password: RequestHandler<
-  {},
-  {},
+  EmptyInterface,
+  EmptyInterface,
   { email: string; password: string; newPassword: string }
 > = async (req, res) => {
   const { email, password, newPassword } = req.body;
 
   const validationStatus = validationResult(req);
   if (!validationStatus.isEmpty()) {
-    validationErrorResponse(res, validationStatus);
+    return validationErrorResponse(res, validationStatus);
   }
 
   if (password === newPassword) {
@@ -114,7 +115,7 @@ export const remindPassword: RequestHandler<{ email: string }> = async (
 
   const validationStatus = validationResult(req);
   if (!validationStatus.isEmpty()) {
-    validationErrorResponse(res, validationStatus);
+    return validationErrorResponse(res, validationStatus);
   }
 
   try {

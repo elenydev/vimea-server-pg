@@ -7,5 +7,5 @@ export const getUserFavouriteMoviesValidator = () => (
 );
 
 export const getCurrentUserValidator = () => (
-    param('email').exists().isEmail()
+    param('userId').exists()
 );

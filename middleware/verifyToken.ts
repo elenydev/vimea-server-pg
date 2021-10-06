@@ -16,6 +16,6 @@ export default (req: Request, res: Response, next: NextFunction) => {
     throw Error ("Authentication token Required")
   }
   
-  req.body.userId = (decodedToken as TokenInterface).user.userId;
+  req.body.userId = (decodedToken as TokenInterface).user?.userId;
   next();
 };
