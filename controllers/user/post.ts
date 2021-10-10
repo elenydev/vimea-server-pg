@@ -129,12 +129,18 @@ export const login: RequestHandler<
 };
 
 export const favouriteMovie: RequestHandler<
-  UserIdQueryParam,
   EmptyInterface,
-  PostUserFavouriteMovieBody
+  EmptyInterface,
+  PostUserFavouriteMovieBody,
+  UserIdQueryParam
 > = async (req, res) => {
   const { movie } = req.body;
-  const { userId } = req.params;
+  const { userId } = req.query;
+
+  const validationStatus = validationResult(req);
+  if (!validationStatus.isEmpty()) {
+    return validationErrorResponse(res, validationStatus);
+  }
 
   try {
     const user = await Prisma.user.findFirst({
@@ -148,14 +154,10 @@ export const favouriteMovie: RequestHandler<
 
     if (user) {
       const isAlreadyAdded = user.favouriteMovies.find(
-        ({ externalApiId }) => externalApiId === movie.id
+        ({ externalApiId }) => externalApiId === movie.externalApiId
       );
 
       if (!isAlreadyAdded) {
-        const movieInstance = await Prisma.movie.findFirst({
-          where: { externalApiId: movie.id },
-        });
-
         await Prisma.user.update({
           where: {
             id: userId,
@@ -164,18 +166,19 @@ export const favouriteMovie: RequestHandler<
             favouriteMovies: {
               connectOrCreate: {
                 where: {
-                  id: movieInstance?.id,
+                  id: movie.id.toString()
                 },
                 create: {
-                  externalApiId: movie.id,
-                  title: movie.title,
-                  averageVote: movie.vote_average,
-                  overview: movie.overview,
                   backdropPathUrl: movie.backdrop_path,
-                },
-              },
-            },
-          },
+                  externalApiId: movie.externalApiId,
+                  overview: movie.overview,
+                  title: movie.title,
+                  averageVote: movie.vote_average
+                }
+              }
+            }
+          }
+
         });
         res.status(201).send({
           message: "Favourite movie succesfully added",
@@ -191,6 +194,7 @@ export const favouriteMovie: RequestHandler<
       errorResponse(res, 404, "Some authorization error occured");
     }
   } catch (err) {
+    console.log(err);
     errorResponse(res, 500);
   }
 };
