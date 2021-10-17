@@ -9,49 +9,55 @@ import {
   GetCurrentUserQueryParams,
   GetUserFavouritesQueryParams,
 } from "../../infrastructure/interfaces/User";
+import { EmptyInterface } from "../../infrastructure/interfaces/shared";
 
-export const favouriteMovies: RequestHandler<GetUserFavouritesQueryParams> =
-  async (req, res) => {
-    const { userId, pageNumber, pageSize } = req.params;
+export const favouriteMovies: RequestHandler<
+  EmptyInterface,
+  EmptyInterface,
+  EmptyInterface,
+  GetUserFavouritesQueryParams
+> = async (req, res) => {
+  const { userId, pageNumber, pageSize } = req.query;
 
-    const validationStatus = validationResult(req);
-    if (!validationStatus.isEmpty()) {
-      return validationErrorResponse(res, validationStatus);
-    }
+  const validationStatus = validationResult(req);
+  if (!validationStatus.isEmpty()) {
+    return validationErrorResponse(res, validationStatus);
+  }
 
-    try {
-      const user = await Prisma.user.findFirst({
-        where: {
-          id: userId,
+  try {
+    const user = await Prisma.user.findFirst({
+      where: {
+        id: userId,
+      },
+      include: {
+        favouriteMovies: {
+          skip:
+            Number(pageNumber) > 1 ? Number(pageNumber) * Number(pageSize) : 0,
+          take: Number(pageSize),
         },
-        include: {
-          favouriteMovies: {
-            skip: Number(pageNumber) * Number(pageSize),
-            take: Number(pageSize),
-          },
-          _count: {
-            select: {
-              favouriteMovies: true,
-            },
+        _count: {
+          select: {
+            favouriteMovies: true,
           },
         },
+      },
+    });
+
+    if (user) {
+      const { favouriteMovies, _count } = user;
+      res.status(200).send({
+        results: favouriteMovies,
+        pageNumber: pageNumber,
+        pageSize: pageSize,
+        totalCount: _count,
       });
-
-      if (user) {
-        const { favouriteMovies, _count } = user;
-        res.status(200).send({
-          results: favouriteMovies,
-          pageNumber: pageNumber,
-          pageSize: pageSize,
-          totalCount: _count,
-        });
-      } else {
-        errorResponse(res, 404, "User not found");
-      }
-    } catch (err) {
-      errorResponse(res, 500);
+    } else {
+      errorResponse(res, 404, "User not found");
     }
-  };
+  } catch (err) {
+    errorResponse(res, 500);
+  }
+};
 
 export const currentUser: RequestHandler<GetCurrentUserQueryParams> = async (
   req,

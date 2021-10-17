@@ -1,9 +1,9 @@
-import { param } from "express-validator";
+import { param, check } from "express-validator";
 
 export const getUserFavouriteMoviesValidator = () => (
-    param('userId').exists(),
-    param('pageNumber').exists(),
-    param('pageSize').exists()
+    check('userId').exists(),
+    check('pageNumber').exists(),
+    check('pageSize').exists()
 );
 
 export const getCurrentUserValidator = () => (
